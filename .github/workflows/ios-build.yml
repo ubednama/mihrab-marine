@@ -58,4 +58,4 @@ jobs:
           prerelease: true
           files: ios/build/Build/Products/Release-iphonesimulator/mihrab-marine-ios-simulator.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
