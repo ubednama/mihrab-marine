@@ -25,17 +25,40 @@ expo-env.d.ts
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+*.log
 
 # macOS
 .DS_Store
 *.pem
 
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
 
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+coverage/
+
+# Build Artifacts
+*.apk
+*.aab
+*.ipa
+*.app
+
 # generated native folders
+# We ignore these because we use Prebuild (Managed Workflow)
 /ios
 /android

@@ -1,57 +1,83 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
+import { Clock, Compass, Bell } from 'lucide-react-native';
+import { View, Platform } from 'react-native';
+import { GlassView } from '@/components/common/GlassView';
+import { useTheme } from '@/contexts/ThemeContext';
+import { theme } from '@/theme';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+interface TabIconProps {
   color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  size: number;
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { activeTheme, isDark } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+        headerShown: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 25 : 20,
+          left: 40,
+          right: 40,
+          height: 60,
+          borderRadius: 30,
+          borderTopWidth: 0,
+          elevation: 0,
+          backgroundColor: 'transparent', // Let GlassView handle background
+          paddingBottom: 0,
+        },
+        tabBarBackground: () => (
+          <GlassView
+            intensity={80}
+            tint={isDark ? "dark" : "light"}
+            borderRadius={30}
+            style={{
+              flex: 1,
+              backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+              borderColor: activeTheme.colors.glass.border,
+              borderWidth: 1,
+            }}
+          />
+        ),
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: activeTheme.colors.text.muted,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: "Prayer Times",
+          tabBarIcon: ({ color, size }: TabIconProps) => (
+            <View className="items-center justify-center top-4">
+              <Clock size={24} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="qibla"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Qibla",
+          tabBarIcon: ({ color, size }: TabIconProps) => (
+            <View className="items-center justify-center top-4">
+              <Compass size={24} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size }: TabIconProps) => (
+            <View className="items-center justify-center top-4">
+              <Bell size={24} color={color} />
+            </View>
+          ),
         }}
       />
     </Tabs>

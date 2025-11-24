@@ -2,16 +2,24 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    /* baseUrl is REQUIRED if you are using 'paths'. 
+      "." represents the root directory of your project.
+    */
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./src/*"]
+    },
+    /* skipLibCheck: true is highly recommended for React Native/Expo.
+      It prevents TypeScript from type-checking all the definition files (.d.ts) 
+      in your node_modules, which often contain conflicting types that you can't fix.
+    */
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ]
 }
