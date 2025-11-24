@@ -1,61 +1,90 @@
-# Mihrab Marine
+# Mihrab Marine 🕋
 
-Mihrab Marine is a premium React Native application designed for maritime professionals and travelers, providing accurate prayer times, Qibla direction, and location-based services with a stunning glassmorphism UI.
+**Mihrab Marine** is a premium, modern Islamic prayer companion app built with **React Native** and **Expo**. It features a stunning "Pitch Black" and "Glassmorphism" aesthetic, designed to provide accurate prayer times, Qibla direction, and essential Islamic utilities with a focus on user experience and visual elegance.
 
-## Features
+![Mihrab Marine Banner](assets/images/splash-icon-dark.svg)
 
--   **Glassmorphism Design**: A modern, sleek UI with blur effects and dynamic backgrounds.
--   **Accurate Prayer Times**: Calculates prayer times based on your location and preferred calculation method (Shafi'i/Hanafi).
--   **Qibla Compass**: Precise Qibla direction with a visual compass and tilt indicator.
--   **Location Services**: Automatically detects your location to provide relevant data.
--   **Notifications**: customizable prayer time reminders.
--   **Next Prayer Countdown**: Visual countdown to the next prayer.
+## ✨ Features
 
-## Tech Stack
+- **📍 Accurate Prayer Times**: Calculates prayer times based on your location and preferred calculation method (MWL, ISNA, Egypt, etc.).
+- **🧭 Advanced Qibla Compass**:
+    - Smooth, animated compass with haptic feedback.
+    - **Tilt Detection**: Visual and haptic guidance to ensure your device is flat for maximum accuracy.
+    - **True North Correction**: Automatically adjusts for magnetic declination.
+- **🎨 Premium UI/UX**:
+    - **Pitch Black Theme**: Optimized for OLED screens, saving battery and looking sleek.
+    - **Glassmorphism**: Modern, frosted glass elements for a depth-rich interface.
+    - **Dynamic Theming**: Full support for System, Dark, and Light modes.
+- **🔔 Smart Notifications**: Customizable reminders for all 5 daily prayers.
+- **🌍 Location Flexibility**: Automatic GPS detection or manual city/coordinate entry.
+- **📅 Hijri Calendar**: Displays the current Hijri date alongside the Gregorian date.
 
--   **React Native**: Core framework.
--   **Expo**: Development platform (Expo Router, Expo Location, Expo Sensors, Expo Blur).
--   **NativeWind (Tailwind CSS)**: Styling.
--   **Reanimated**: Smooth animations.
--   **Lucide React Native**: Vector icons.
--   **Jest & React Native Testing Library**: Testing.
+## 🛠 Tech Stack
 
-## Architecture
+- **Framework**: [React Native](https://reactnative.dev/) (Expo SDK 52)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS)
+- **Animations**: [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/)
+- **State Management**: React Context API
+- **Sensors**: Expo Sensors (Magnetometer, DeviceMotion)
 
-The project follows a feature-based architecture for scalability and maintainability:
+## 🚀 Getting Started
 
-```
-src/
-  components/
-    common/       # Reusable UI components (GlassView, etc.)
-    features/     # Feature-specific components (PrayerTimeCard, SkyBackground)
-  constants/      # App constants
-  contexts/       # React Contexts (Notification, PrayerSchool)
-  hooks/          # Custom hooks
-  services/       # API services
-  theme/          # Design system tokens
-  types/          # TypeScript definitions
-  utils/          # Helper functions
-app/              # Expo Router pages
-```
+### Prerequisites
 
-## Setup
+- Node.js (v18+)
+- npm or yarn
+- iOS Simulator (Mac) or Android Emulator
 
-1.  **Install Dependencies**:
+### Installation
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/ubednama/mihrab-marine.git
+    cd mihrab-marine
+    ```
+
+2.  **Install dependencies**:
     ```bash
     npm install
     ```
 
-2.  **Run the App**:
+3.  **Run the app**:
     ```bash
-    npm start
+    npx expo start
     ```
+    - Press `i` to open in iOS Simulator.
+    - Press `a` to open in Android Emulator.
 
-3.  **Run Tests**:
-    ```bash
-    npm test
-    ```
+## 🧪 Testing
 
-## CI/CD
+Run the test suite to verify core logic and utilities:
 
-This project uses GitHub Actions for Continuous Integration. The workflow is defined in `.github/workflows/ci.yml` and runs tests on every push and pull request to the `main` branch.
+```bash
+npm test
+```
+
+Run type checking:
+
+```bash
+npm run type-check
+```
+
+## 📱 Screenshots
+
+| Home Screen | Qibla Compass | Settings |
+|:---:|:---:|:---:|
+| *(Add screenshot)* | *(Add screenshot)* | *(Add screenshot)* |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+Built with ❤️ by **ubednama**
