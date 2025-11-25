@@ -55,9 +55,16 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: dev-build
-          name: Development Build
-          body: "Latest automatic build from main branch."
+          tag_name: build-${{ github.run_number }}
+          name: Mihrab Marine APK Build #${{ github.run_number }}
+          body: |
+            Automated build from main branch.
+            
+            **Includes:**
+            - Universal APK
+            - ARM64-v8a
+            - ARMEABI-v7a
+            - x86 / x86_64
           draft: false
           prerelease: true
           files: android/app/build/outputs/apk/release/*.apk

@@ -72,7 +72,7 @@ npm run type-check
 ## 📱 Screenshots
 
 | Home Screen | Qibla Compass |
-|:---:|:---:|:---:|
+|:---:|:---:|
 | <img width="346" height="765" alt="Screenshot 2025-11-25 at 4 35 36 PM" src="https://github.com/user-attachments/assets/7bd3e2fe-b0f0-4168-ac03-b04f8b86a014" /> | <img width="411" height="840" alt="Screenshot 2025-11-25 at 4 35 09 PM" src="https://github.com/user-attachments/assets/97241081-ff02-405b-81bf-0baa5b02facf" /> |
 
 ## 🤝 Contributing
