@@ -2,8 +2,6 @@
 
 **Mihrab Marine** is a premium, modern Islamic prayer companion app built with **React Native** and **Expo**. It features a stunning "Pitch Black" and "Glassmorphism" aesthetic, designed to provide accurate prayer times, Qibla direction, and essential Islamic utilities with a focus on user experience and visual elegance.
 
-![Mihrab Marine Banner](assets/images/splash-icon-dark.svg)
-
 ## ✨ Features
 
 - **📍 Accurate Prayer Times**: Calculates prayer times based on your location and preferred calculation method (MWL, ISNA, Egypt, etc.).
