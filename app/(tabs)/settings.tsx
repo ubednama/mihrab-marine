@@ -23,7 +23,9 @@ import {
   ChevronDown,
   Save,
   Navigation,
+  RefreshCw,
 } from "lucide-react-native";
+import { useAppUpdates } from "@/hooks/useAppUpdates";
 import Constants from "expo-constants";
 import { usePrayerSchool } from "@/contexts/PrayerSchoolContext";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -95,6 +97,7 @@ export default function SettingsScreen() {
   const { prayerSchool, setPrayerSchool } = usePrayerSchool();
   const { location, updateLocation, detectLocation, isLoading: isLoadingLocation, isManual } = useLocationContext();
   const { themeMode, setThemeMode, activeTheme, isDark } = useTheme();
+  const { checkForUpdates, isChecking, isDownloading } = useAppUpdates();
 
   // Location UI State
   const [isLocationExpanded, setIsLocationExpanded] = useState(false);
@@ -364,6 +367,22 @@ export default function SettingsScreen() {
               label="Version"
               value={Constants.expoConfig?.version || "1.0.0"}
             />
+            {/* <SettingItem
+              theme={activeTheme}
+              icon={
+                <View className="bg-emerald-500/20 p-2 rounded-lg">
+                  <RefreshCw size={18} color="#34d399" />
+                </View>
+              }
+              label="Check for Updates"
+              onPress={checkForUpdates}
+              rightElement={
+                (isChecking || isDownloading) ? (
+                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                ) : undefined
+              }
+              subtitle={isDownloading ? "Downloading..." : "Tap to check"}
+            /> */}
             <SettingItem
               theme={activeTheme}
               icon={

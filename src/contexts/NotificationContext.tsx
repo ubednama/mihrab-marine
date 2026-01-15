@@ -68,6 +68,22 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       console.warn("Notifications are not fully supported in Expo Go. Use a development build.");
     }
 
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('prayer-notifications', {
+        name: 'Prayer Notifications',
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+
+      Notifications.setNotificationChannelAsync('prayer-reminders', {
+        name: 'Prayer Reminders',
+        importance: Notifications.AndroidImportance.DEFAULT,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
     loadSettings();
   }, []);
 
@@ -118,8 +134,13 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
               body: `It is now time for the ${prayer.name} prayer.`,
               sound: true,
               data: { prayer: prayer.name, type: "actual" },
+              priority: Notifications.AndroidNotificationPriority.HIGH,
             },
-            trigger: prayerTime as any,
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: prayerTime,
+              channelId: Platform.OS === 'android' ? 'prayer-notifications' : undefined,
+            },
           });
         }
 
@@ -134,8 +155,13 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
               body: `${notificationTiming} minutes remaining until ${prayer.name}.`,
               sound: true,
               data: { prayer: prayer.name, type: "before" },
+              priority: Notifications.AndroidNotificationPriority.DEFAULT,
             },
-            trigger: beforeTime as any,
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: beforeTime,
+              channelId: Platform.OS === 'android' ? 'prayer-reminders' : undefined,
+            },
           });
         }
       }
