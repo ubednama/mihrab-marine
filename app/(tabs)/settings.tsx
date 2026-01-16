@@ -449,7 +449,11 @@ export default function SettingsScreen() {
                 </View>
               }
               label="Build"
-              value={Constants.expoConfig?.ios?.buildNumber || "1"}
+              value={
+                Platform.OS === 'android'
+                  ? (Constants.expoConfig?.android?.versionCode?.toString() || "1")
+                  : (Constants.expoConfig?.ios?.buildNumber || "1")
+              }
               isLast={true}
             />
           </GlassView>

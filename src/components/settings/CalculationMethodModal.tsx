@@ -67,8 +67,8 @@ export const CalculationMethodModal: React.FC<CalculationMethodModalProps> = ({
             visible={isVisible}
             onRequestClose={onClose}
         >
-            <View className="flex-1 max-h-[75vh] justify-center items-center p-4 bg-black/80">
-                <View className="w-[90%] rounded-[32px] overflow-hidden shadow-2xl" style={{ backgroundColor: activeTheme.colors.background }}>
+            <View className="flex-1 justify-center items-center p-4 bg-black/80">
+                <View className="w-[90%] max-h-[75vh] rounded-[32px] overflow-hidden shadow-2xl" style={{ backgroundColor: activeTheme.colors.background }}>
                     <View
                         className="w-full h-full absolute top-0 left-0"
                         style={{

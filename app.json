@@ -2,7 +2,7 @@
   "expo": {
     "name": "mihrab-marine",
     "slug": "mihrab-marine",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mihrabmarine",
@@ -19,13 +19,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mihrab.marine",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"],
         "NSUserNotificationsUsageDescription": "We need notification permission to remind you of prayer times throughout the day."
       }
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "monochromeImage": "./assets/images/adaptive-icon-monochrome.png",
