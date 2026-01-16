@@ -6,13 +6,13 @@
 
 - **📍 Accurate Prayer Times**: Calculates prayer times based on your location and preferred calculation method (MWL, ISNA, Egypt, etc.).
 - **🧭 Advanced Qibla Compass**:
-    - Smooth, animated compass with haptic feedback.
-    - **Tilt Detection**: Visual and haptic guidance to ensure your device is flat for maximum accuracy.
-    - **True North Correction**: Automatically adjusts for magnetic declination.
+  - Smooth, animated compass with haptic feedback.
+  - **Tilt Detection**: Visual and haptic guidance to ensure your device is flat for maximum accuracy.
+  - **True North Correction**: Automatically adjusts for magnetic declination.
 - **🎨 Premium UI/UX**:
-    - **Pitch Black Theme**: Optimized for OLED screens, saving battery and looking sleek.
-    - **Glassmorphism**: Modern, frosted glass elements for a depth-rich interface.
-    - **Dynamic Theming**: Full support for System, Dark, and Light modes.
+  - **Pitch Black Theme**: Optimized for OLED screens, saving battery and looking sleek.
+  - **Glassmorphism**: Modern, frosted glass elements for a depth-rich interface.
+  - **Dynamic Theming**: Full support for System, Dark, and Light modes.
 - **🔔 Smart Notifications**: Customizable reminders for all 5 daily prayers.
 - **🌍 Location Flexibility**: Automatic GPS detection or manual city/coordinate entry.
 - **📅 Hijri Calendar**: Displays the current Hijri date alongside the Gregorian date.
@@ -35,15 +35,19 @@
 - npm or yarn
 - iOS Simulator (Mac) or Android Emulator
 
+> **Note**: This project is optimized for both Android and iOS (via Simulator). However, the automated build pipeline currently focuses on generating Android APKs. iOS builds can be run locally for development and testing.
+
 ### Installation
 
 1.  **Clone the repository**:
+
     ```bash
     git clone https://github.com/ubednama/mihrab-marine.git
     cd mihrab-marine
     ```
 
 2.  **Install dependencies**:
+
     ```bash
     npm install
     ```
@@ -71,8 +75,8 @@ npm run type-check
 
 ## 📱 Screenshots
 
-| Home Screen | Qibla Compass |
-|:---:|:---:|
+|                                                                           Home Screen                                                                            |                                                                          Qibla Compass                                                                           |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img width="346" height="765" alt="Screenshot 2025-11-25 at 4 35 36 PM" src="https://github.com/user-attachments/assets/7bd3e2fe-b0f0-4168-ac03-b04f8b86a014" /> | <img width="411" height="840" alt="Screenshot 2025-11-25 at 4 35 09 PM" src="https://github.com/user-attachments/assets/97241081-ff02-405b-81bf-0baa5b02facf" /> |
 
 ## 🤝 Contributing
