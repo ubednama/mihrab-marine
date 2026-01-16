@@ -19,7 +19,7 @@
 
 ## 🛠 Tech Stack
 
-- **Framework**: [React Native](https://reactnative.dev/) (Expo SDK 52)
+- **Framework**: [React Native](https://reactnative.dev/) (Expo SDK 54)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS)
 - **Animations**: [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
@@ -53,9 +53,11 @@
     ```
 
 3.  **Run the app**:
+
     ```bash
     npx expo start
     ```
+
     - Press `i` to open in iOS Simulator.
     - Press `a` to open in Android Emulator.
 

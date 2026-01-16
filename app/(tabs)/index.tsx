@@ -27,6 +27,7 @@ import { PrayerTimeCard } from "@/components/features/PrayerTimeCard";
 import { usePrayerTimes } from "@/hooks/usePrayerTimes";
 import { useWeather } from "@/hooks/useWeather";
 import { useHijriDate } from "@/hooks/useHijriDate";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 const { width } = Dimensions.get("window");
 import { useTimeOfDayAnimation } from "@/hooks/useTimeOfDayAnimation";
@@ -35,13 +36,14 @@ import { useTheme } from "@/contexts/ThemeContext";
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
 export default function PrayerTimesScreen() {
-  const { prayerSchool } = usePrayerSchool();
+  const { prayerSchool, calculationMethod } = usePrayerSchool();
   const { location, city, isLoading: isLoadingLocation, detectLocation, isManual } = useLocationContext();
   const { fontsLoaded } = useFontContext();
   const { activeTheme, isDark } = useTheme();
+  const { setPrayerTimes } = useNotifications();
 
   // Custom Hooks
-  const { prayers, nextPrayer, timeUntilNext } = usePrayerTimes({ location, prayerSchool });
+  const { prayers, nextPrayer, timeUntilNext } = usePrayerTimes({ location, prayerSchool, calculationMethod });
   const { temperature, aqi } = useWeather({ location });
   const { hijriDate, gregorianDate } = useHijriDate();
   const timeOfDayProgress = useTimeOfDayAnimation();
@@ -71,6 +73,13 @@ export default function PrayerTimesScreen() {
       }
     }
   }, [nextPrayer, prayers]);
+
+  // Auto-pass prayer times to notification context for scheduling
+  useEffect(() => {
+    if (prayers.length > 0) {
+      setPrayerTimes(prayers);
+    }
+  }, [prayers]);
 
   if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: activeTheme.colors.background }} />;
 

@@ -6,11 +6,13 @@ import React, {
   ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MadhabTypes } from "@/types";
+import { CalculationMethodType, MadhabTypes } from "@/types";
 
 interface PrayerSchoolContextType {
   prayerSchool: MadhabTypes;
+  calculationMethod: CalculationMethodType;
   setPrayerSchool: (school: MadhabTypes) => Promise<void>;
+  setCalculationMethod: (method: CalculationMethodType) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -20,23 +22,30 @@ const PrayerSchoolContext = createContext<PrayerSchoolContextType | undefined>(
 
 export const PrayerSchoolProvider = ({ children }: { children: ReactNode }) => {
   const [prayerSchool, setPrayerSchoolState] = useState<MadhabTypes>("shafi");
+  const [calculationMethod, setCalculationMethodState] =
+    useState<CalculationMethodType>("MWL");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadPrayerSchool = async () => {
+    const loadSettings = async () => {
       try {
         const savedSchool = await AsyncStorage.getItem("prayerSchool");
+        const savedMethod = await AsyncStorage.getItem("calculationMethod");
+
         if (savedSchool === "shafi" || savedSchool === "hanafi") {
           setPrayerSchoolState(savedSchool as MadhabTypes);
         }
+        if (savedMethod) {
+          setCalculationMethodState(savedMethod as CalculationMethodType);
+        }
       } catch (error) {
-        console.error("Error loading prayer school:", error);
+        console.error("Error loading settings:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadPrayerSchool();
+    loadSettings();
   }, []);
 
   const setPrayerSchool = async (school: MadhabTypes) => {
@@ -48,9 +57,24 @@ export const PrayerSchoolProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const setCalculationMethod = async (method: CalculationMethodType) => {
+    try {
+      setCalculationMethodState(method);
+      await AsyncStorage.setItem("calculationMethod", method);
+    } catch (error) {
+      console.error("Error saving calculation method:", error);
+    }
+  };
+
   return (
     <PrayerSchoolContext.Provider
-      value={{ prayerSchool, setPrayerSchool, isLoading }}
+      value={{
+        prayerSchool,
+        calculationMethod,
+        setPrayerSchool,
+        setCalculationMethod,
+        isLoading,
+      }}
     >
       {children}
     </PrayerSchoolContext.Provider>

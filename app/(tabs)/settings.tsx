@@ -31,8 +31,10 @@ import { usePrayerSchool } from "@/contexts/PrayerSchoolContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useLocationContext } from "@/contexts/LocationContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { CalculationMethodType } from "@/types";
 import { GlassView } from "@/components/common/GlassView";
 import { theme } from "@/theme";
+import { CalculationMethodModal } from "@/components/settings/CalculationMethodModal";
 
 // Reusable Setting Item Component
 const SettingItem = ({
@@ -94,7 +96,7 @@ export default function SettingsScreen() {
     toggleNotifications,
     setNotificationTiming,
   } = useNotifications();
-  const { prayerSchool, setPrayerSchool } = usePrayerSchool();
+  const { prayerSchool, setPrayerSchool, calculationMethod, setCalculationMethod } = usePrayerSchool();
   const { location, updateLocation, detectLocation, isLoading: isLoadingLocation, isManual } = useLocationContext();
   const { themeMode, setThemeMode, activeTheme, isDark } = useTheme();
   const { checkForUpdates, isChecking, isDownloading } = useAppUpdates();
@@ -103,6 +105,15 @@ export default function SettingsScreen() {
   const [isLocationExpanded, setIsLocationExpanded] = useState(false);
   const [manualLat, setManualLat] = useState("");
   const [manualLong, setManualLong] = useState("");
+
+  // Notifications UI State
+  const [isNotificationsExpanded, setIsNotificationsExpanded] = useState(false);
+  const [isCalculationModalVisible, setIsCalculationModalVisible] = useState(false);
+
+  const toggleNotificationsAccordion = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsNotificationsExpanded(!isNotificationsExpanded);
+  };
 
   useEffect(() => {
     if (location) {
@@ -159,16 +170,23 @@ export default function SettingsScreen() {
         <SectionHeader title="Notifications" color={activeTheme.colors.text.secondary} />
         <View className="mx-4 rounded-2xl overflow-hidden border" style={{ borderColor: activeTheme.colors.glass.border }}>
           <GlassView intensity={15} tint={isDark ? "dark" : "light"} borderRadius={0}>
-            <SettingItem
-              theme={activeTheme}
-              icon={
-                <View className="bg-red-500/20 p-2 rounded-lg">
-                  <Bell size={18} color="#ef4444" />
-                </View>
-              }
-              label="Prayer Notifications"
-              isLast={!notificationsEnabled}
-              rightElement={
+            <TouchableOpacity
+              onPress={toggleNotificationsAccordion}
+              activeOpacity={0.7}
+              className="flex-row items-center px-4 py-4"
+            >
+              <View className="bg-red-500/20 p-2 rounded-lg mr-4">
+                <Bell size={18} color="#ef4444" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-[16px] font-medium" style={{ color: activeTheme.colors.text.primary }}>
+                  Notifications
+                </Text>
+                <Text className="text-xs mt-0.5" style={{ color: activeTheme.colors.text.secondary }}>
+                  {notificationsEnabled ? "On" : "Off"}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-3">
                 <Switch
                   value={notificationsEnabled}
                   onValueChange={toggleNotifications}
@@ -178,30 +196,45 @@ export default function SettingsScreen() {
                   }}
                   thumbColor={"#ffffff"}
                 />
-              }
-            />
-
-            {notificationsEnabled && (
-              <View className="px-4 py-4 border-t" style={{ borderColor: activeTheme.colors.glass.border }}>
-                <View className="flex-row justify-between mb-4">
-                  <Text className="font-medium" style={{ color: activeTheme.colors.text.primary }}>
-                    Reminder Timing
-                  </Text>
-                  <Text className="font-bold" style={{ color: theme.colors.primary }}>
-                    {notificationTiming} min before
-                  </Text>
-                </View>
-                <Slider
-                  style={{ width: "100%", height: 40 }}
-                  minimumValue={5}
-                  maximumValue={60}
-                  step={5}
-                  value={notificationTiming}
-                  onValueChange={setNotificationTiming}
-                  minimumTrackTintColor={theme.colors.primary}
-                  maximumTrackTintColor={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
-                  thumbTintColor={isDark ? "#ffffff" : theme.colors.primary}
+                <ChevronDown
+                  size={20}
+                  color={activeTheme.colors.text.secondary}
+                  style={{
+                    transform: [{ rotate: isNotificationsExpanded ? "180deg" : "0deg" }],
+                  }}
                 />
+              </View>
+            </TouchableOpacity>
+
+            {isNotificationsExpanded && (
+              <View className="px-4 py-4 border-t" style={{ borderColor: activeTheme.colors.glass.border }}>
+                {notificationsEnabled ? (
+                  <>
+                    <View className="flex-row justify-between mb-4">
+                      <Text className="font-medium" style={{ color: activeTheme.colors.text.primary }}>
+                        Reminder Timing
+                      </Text>
+                      <Text className="font-bold" style={{ color: theme.colors.primary }}>
+                        {notificationTiming} min before
+                      </Text>
+                    </View>
+                    <Slider
+                      style={{ width: "100%", height: 40 }}
+                      minimumValue={5}
+                      maximumValue={60}
+                      step={5}
+                      value={notificationTiming}
+                      onValueChange={setNotificationTiming}
+                      minimumTrackTintColor={theme.colors.primary}
+                      maximumTrackTintColor={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+                      thumbTintColor={isDark ? "#ffffff" : theme.colors.primary}
+                    />
+                  </>
+                ) : (
+                  <Text style={{ color: activeTheme.colors.text.secondary, textAlign: 'center' }}>
+                    Enable notifications to customize reminder timing.
+                  </Text>
+                )}
               </View>
             )}
           </GlassView>
@@ -240,16 +273,41 @@ export default function SettingsScreen() {
               theme={activeTheme}
               icon={
                 <View className="bg-indigo-500/20 p-2 rounded-lg">
-                  <Moon size={18} color="#818cf8" />
+                  <Globe size={18} color="#818cf8" />
                 </View>
               }
               label="Calculation Method"
-              value={prayerSchool === "shafi" ? "Shafi'i" : "Hanafi"}
+              value={calculationMethod}
+              onPress={() => {
+                const methods: CalculationMethodType[] = ["MWL", "ISNA", "Egypt", "Makkah", "Karachi", "Tehran", "Singapore"];
+                const currentIndex = methods.indexOf(calculationMethod);
+                const nextIndex = (currentIndex + 1) % methods.length;
+                setCalculationMethod(methods[nextIndex]);
+              }}
+              subtitle="Tap to cycle convention"
+              rightElement={
+                <TouchableOpacity onPress={() => setIsCalculationModalVisible(true)} className="ml-2">
+                  <View className="bg-blue-500/20 p-1.5 rounded-full">
+                    <Info size={14} color="#3b82f6" />
+                  </View>
+                </TouchableOpacity>
+              }
+            />
+
+            <SettingItem
+              theme={activeTheme}
+              icon={
+                <View className="bg-indigo-500/20 p-2 rounded-lg">
+                  <Moon size={18} color="#818cf8" />
+                </View>
+              }
+              label="Juristics Method"
+              value={prayerSchool === "shafi" ? "Shafi'i (Standard)" : "Hanafi"}
               isLast={true}
               onPress={() =>
                 setPrayerSchool(prayerSchool === "shafi" ? "hanafi" : "shafi")
               }
-              subtitle="Tap to toggle Madhab"
+              subtitle="Asr Time Calculation"
             />
           </GlassView>
         </View>
@@ -406,6 +464,12 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+
+      <CalculationMethodModal
+        isVisible={isCalculationModalVisible}
+        onClose={() => setIsCalculationModalVisible(false)}
+        activeTheme={activeTheme}
+      />
+    </View >
   );
 }

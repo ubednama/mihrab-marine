@@ -22,6 +22,7 @@ interface NotificationContextType {
   toggleNotifications: () => Promise<void>;
   setNotificationTiming: (minutes: number) => Promise<void>;
   schedulePrayerNotifications: (prayers: PrayerTime[]) => Promise<void>;
+  setPrayerTimes: (prayers: PrayerTime[]) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -32,6 +33,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notificationsEnabled, setNotificationsEnabled] =
     useState<boolean>(false);
   const [notificationTiming, setNotificationTimingState] = useState<number>(15);
+  const [prayerTimes, setPrayerTimesState] = useState<PrayerTime[]>([]);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -86,6 +88,49 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
     loadSettings();
   }, []);
+
+  // Auto-schedule when prayers change or notifications are enabled
+  useEffect(() => {
+    const autoSchedule = async () => {
+      if (notificationsEnabled && prayerTimes.length > 0) {
+        // Check if we need to reschedule (new day)
+        const lastScheduledDate = await AsyncStorage.getItem('lastScheduledDate');
+        const today = new Date().toDateString();
+
+        if (lastScheduledDate !== today) {
+          await schedulePrayerNotifications(prayerTimes);
+          await AsyncStorage.setItem('lastScheduledDate', today);
+        }
+      }
+    };
+
+    autoSchedule();
+  }, [notificationsEnabled, prayerTimes]);
+
+  // Daily re-scheduling at midnight
+  useEffect(() => {
+    const scheduleNextDayRefresh = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 1, 0); // 1 second after midnight
+
+      const timeUntilMidnight = tomorrow.getTime() - now.getTime();
+
+      const timer = setTimeout(async () => {
+        if (notificationsEnabled && prayerTimes.length > 0) {
+          await schedulePrayerNotifications(prayerTimes);
+          await AsyncStorage.setItem('lastScheduledDate', new Date().toDateString());
+        }
+        scheduleNextDayRefresh(); // Schedule for next day
+      }, timeUntilMidnight);
+
+      return timer;
+    };
+
+    const timer = scheduleNextDayRefresh();
+    return () => clearTimeout(timer);
+  }, [notificationsEnabled, prayerTimes]);
 
   const toggleNotifications = async () => {
     try {
@@ -171,6 +216,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const setPrayerTimes = (prayers: PrayerTime[]) => {
+    setPrayerTimesState(prayers);
+  };
+
   return (
     <NotificationContext.Provider
       value={{
@@ -179,6 +228,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         toggleNotifications,
         setNotificationTiming,
         schedulePrayerNotifications,
+        setPrayerTimes,
       }}
     >
       {children}

@@ -2,21 +2,6 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { PrayerTime } from '@/types';
 
-// Configure notification behavior
-try {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true,
-    }),
-  });
-} catch (error) {
-  console.warn('Notifications configuration failed:', error);
-}
-
 export interface NotificationSettings {
   enabled: boolean;
   prayers: {
@@ -56,27 +41,6 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
 
     if (finalStatus !== 'granted') {
       return false;
-    }
-
-    // Configure notification channel for Android
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('prayer-notifications', {
-        name: 'Prayer Times',
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#10B981',
-        sound: 'default',
-        description: 'Notifications for Islamic prayer times',
-      });
-      
-      await Notifications.setNotificationChannelAsync('prayer-reminders', {
-        name: 'Prayer Reminders',
-        importance: Notifications.AndroidImportance.DEFAULT,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#10B981',
-        sound: 'default',
-        description: 'Reminder notifications for Islamic prayer times',
-      });
     }
 
     return true;
@@ -121,7 +85,7 @@ export const schedulePrayerNotifications = async (
       if (!settings.prayers[prayerKey]) continue;
 
       const prayerTime = new Date(`${today} ${prayer.time}`);
-      
+
       // Skip if prayer time has already passed today
       if (prayerTime <= now) continue;
 
@@ -143,7 +107,7 @@ export const schedulePrayerNotifications = async (
       // Schedule reminder if enabled
       if (settings.reminderMinutes > 0) {
         const reminderTime = new Date(prayerTime.getTime() - settings.reminderMinutes * 60000);
-        
+
         if (reminderTime > now) {
           await Notifications.scheduleNotificationAsync({
             content: {
@@ -169,16 +133,16 @@ export const schedulePrayerNotifications = async (
 // Get next prayer time for immediate notification display
 export const getNextPrayer = (prayers: PrayerTime[]): PrayerTime | null => {
   const now = new Date();
-  
+
   // Filter out sunrise and find next prayer
   const prayerTimes = prayers.filter(prayer => prayer.name !== 'Sunrise');
-  
+
   for (const prayer of prayerTimes) {
     if (prayer.time > now) {
       return prayer;
     }
   }
-  
+
   // If no prayer today, return first prayer of tomorrow (Fajr)
   return prayerTimes[0] || null;
 };
@@ -186,15 +150,15 @@ export const getNextPrayer = (prayers: PrayerTime[]): PrayerTime | null => {
 // Calculate time remaining until next prayer
 export const getTimeUntilNextPrayer = (nextPrayer: PrayerTime | null): string => {
   if (!nextPrayer) return '';
-  
+
   const now = new Date();
   const timeDiff = nextPrayer.time.getTime() - now.getTime();
-  
+
   if (timeDiff <= 0) return '';
-  
+
   const hours = Math.floor(timeDiff / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   if (hours > 0) {
     return `${hours}h ${minutes}m`;
   } else {

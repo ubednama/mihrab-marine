@@ -312,7 +312,7 @@ export default function QiblaScreen() {
                   <Rotate3D size={18} color={activeTheme.colors.text.secondary} />
                 )}
                 <Text
-                  className="text-xs font-medium"
+                  className="text-xs font-medium py-4"
                   style={{ color: isFlat ? theme.colors.primary : activeTheme.colors.text.secondary }}
                 >
                   {isFlat ? "Perfectly Flat" : "Device Tilted"}

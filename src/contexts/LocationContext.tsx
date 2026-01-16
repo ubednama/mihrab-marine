@@ -119,19 +119,25 @@ export const LocationProvider = ({ children }: { children: ReactNode }) => {
 
   const getCityName = async (lat: number, lon: number) => {
     try {
-      // Simple caching could be added here if needed, but for now direct fetch
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`
-      );
-      const data = await response.json();
-      const cityName =
-        data.address?.city ||
-        data.address?.town ||
-        data.address?.village ||
-        data.address?.county ||
-        "Unknown Location";
-      setCity(cityName);
+      const result = await Location.reverseGeocodeAsync({
+        latitude: lat,
+        longitude: lon,
+      });
+
+      if (result.length > 0) {
+        const address = result[0];
+        const cityName =
+          address.city ||
+          address.subregion ||
+          address.region ||
+          address.country ||
+          "Unknown Location";
+        setCity(cityName);
+      } else {
+        setCity("Unknown Location");
+      }
     } catch (e) {
+      console.warn("Reverse geocoding failed:", e);
       setCity(`${lat.toFixed(2)}, ${lon.toFixed(2)}`);
     }
   };

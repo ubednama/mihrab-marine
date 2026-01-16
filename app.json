@@ -14,17 +14,22 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mihrab.marine",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "NSUserNotificationsUsageDescription": "We need notification permission to remind you of prayer times throughout the day."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "monochromeImage": "./assets/images/adaptive-icon-monochrome.png",
+        "backgroundColor": "#000000"
       },
       "package": "com.mihrab.marine",
       "permissions": [

@@ -53,10 +53,11 @@ export const PrayerTimeCard = memo(
                     >
                         <View className="flex-row justify-between items-center w-full">
                             <View className="flex-row items-center gap-4">
-                                <View
-                                    className={`w-1.5 h-12 rounded-full ${isNext ? "bg-emerald-500 shadow-lg shadow-emerald-500/50" : ""}`}
-                                    style={!isNext ? { backgroundColor: isDark ? '#475569' : '#cbd5e1' } : {}}
-                                />
+                                {isNext ? (
+                                    <View className="w-1.5 h-12 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50" />
+                                ) : (
+                                    <View className="w-1.5 h-12 rounded-full" style={{ backgroundColor: isDark ? '#475569' : '#cbd5e1' }} />
+                                )}
                                 <View>
                                     <Text
                                         className={`${isNext
