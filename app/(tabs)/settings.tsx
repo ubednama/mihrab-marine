@@ -415,16 +415,6 @@ export default function SettingsScreen() {
         <SectionHeader title="About" color={activeTheme.colors.text.secondary} />
         <View className="mx-4 rounded-2xl overflow-hidden border mb-10" style={{ borderColor: activeTheme.colors.glass.border }}>
           <GlassView intensity={15} tint={isDark ? "dark" : "light"} borderRadius={0}>
-            <SettingItem
-              theme={activeTheme}
-              icon={
-                <View className="bg-slate-600/20 p-2 rounded-lg">
-                  <Info size={18} color="#cbd5e1" />
-                </View>
-              }
-              label="Version"
-              value={Constants.expoConfig?.version || "1.0.0"}
-            />
             {/* <SettingItem
               theme={activeTheme}
               icon={
@@ -445,15 +435,14 @@ export default function SettingsScreen() {
               theme={activeTheme}
               icon={
                 <View className="bg-slate-600/20 p-2 rounded-lg">
-                  <Smartphone size={18} color="#cbd5e1" />
+                  <Info size={18} color="#cbd5e1" />
                 </View>
               }
-              label="Build"
-              value={
-                Platform.OS === 'android'
-                  ? (Constants.expoConfig?.android?.versionCode?.toString() || "1")
-                  : (Constants.expoConfig?.ios?.buildNumber || "1")
-              }
+              label="Version"
+              value={`v${Constants.expoConfig?.version} (${Platform.OS === 'android'
+                ? (Constants.expoConfig?.android?.versionCode?.toString() || "1")
+                : (Constants.expoConfig?.ios?.buildNumber || "1")
+                })`}
               isLast={true}
             />
           </GlassView>
