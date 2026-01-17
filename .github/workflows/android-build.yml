@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,16 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'gradle'
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -44,33 +46,60 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease
 
-      - name: Sign APK
-        run: |
-          # 1. Generate a release keystore
-          keytool -genkey -v -keystore release.keystore -alias android-release-key -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Mihrab Marine,O=Mihrab Marine,C=US"
-          
-          # 2. Find build tools and APK
-          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
-          echo "Using Build Tools: $BUILD_TOOLS_PATH"
-          
-          APK_PATH=$(find android/app/build/outputs/apk/release -name "app-release-unsigned.apk" -o -name "app-release.apk" | head -n 1)
-          echo "Found APK to sign: $APK_PATH"
-          
-          # 3. ZipAlign (Required before signing)
-          $BUILD_TOOLS_PATH/zipalign -v -p 4 "$APK_PATH" android/app/build/outputs/apk/release/app-release-aligned.apk
-          
-          # 4. Sign the APK
-          $BUILD_TOOLS_PATH/apksigner sign --ks release.keystore --ks-pass pass:android --key-pass pass:android --out android/app/build/outputs/apk/release/app-release-signed.apk android/app/build/outputs/apk/release/app-release-aligned.apk
-          
-          # 5. Clean up
-          rm "$APK_PATH"
-          rm android/app/build/outputs/apk/release/app-release-aligned.apk
-
       - name: Get App Version
         id: get_version
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Sign APKs
+        run: |
+          # 1. Generate a release keystore
+          keytool -genkey -v -keystore release.keystore -alias android-release-key -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Mihrab Marine,O=Mihrab Marine,C=US"
+          
+          # 2. Find build tools
+          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "Using Build Tools: $BUILD_TOOLS_PATH"
+          
+          # 3. Find and Sign ALL APKs
+          cd android/app/build/outputs/apk/release
+          
+          # Loop through all unsigned APKs (Splits + Universal)
+          for APK in *-release-unsigned.apk; do
+            if [ -f "$APK" ]; then
+              echo "Processing $APK..."
+              
+              # Differentiate architecture based on filename
+              # Typical names: app-arm64-v8a-release-unsigned.apk, app-universal-release-unsigned.apk
+              
+              ARCH="universal"
+              if [[ "$APK" == *"arm64-v8a"* ]]; then
+                ARCH="arm64-v8a"
+              elif [[ "$APK" == *"armeabi-v7a"* ]]; then
+                ARCH="armeabi-v7a"
+              elif [[ "$APK" == *"x86_64"* ]]; then
+                ARCH="x86_64"
+              elif [[ "$APK" == *"x86"* ]]; then
+                ARCH="x86"
+              fi
+              
+              FINAL_NAME="mihrab-marine-v${{ env.VERSION }}-${ARCH}.apk"
+              
+              # ZipAlign
+              $BUILD_TOOLS_PATH/zipalign -v -p 4 "$APK" "aligned.apk"
+              
+              # Sign
+              $BUILD_TOOLS_PATH/apksigner sign --ks ../../../../../release.keystore --ks-pass pass:android --key-pass pass:android --out "$FINAL_NAME" "aligned.apk"
+              
+              echo "Signed: $FINAL_NAME"
+              
+              # Cleanup
+              rm "$APK"
+              rm "aligned.apk"
+            fi
+          done
+          
+          ls -la
 
       - name: Generate Changelog
         id: changelog
@@ -79,21 +108,14 @@ jobs:
           git log --pretty=format:"- %s (%h)" -n 10 >> changelog.md
           echo "" >> changelog.md
 
-      - name: Rename APKs
-        run: |
-          cd android/app/build/outputs/apk/release/
-          # We only expect app-release-signed.apk now
-          mv app-release-signed.apk "mihrab-marine-v${{ env.VERSION }}.apk"
-          ls -la
-
-      - name: Upload APK Artifact
+      - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: android/app/build/outputs/apk/release/*.apk
 
       - name: Release APK
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
           tag_name: v${{ env.VERSION }}
@@ -103,3 +125,4 @@ jobs:
           prerelease: false
           files: android/app/build/outputs/apk/release/*.apk
           token: ${{ secrets.PAT_TOKEN }}
+
