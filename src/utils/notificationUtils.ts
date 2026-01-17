@@ -100,7 +100,7 @@ export const schedulePrayerNotifications = async (
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DATE,
           date: prayerTime,
-          channelId: Platform.OS === 'android' ? 'prayer-notifications' : undefined,
+          channelId: Platform.OS === 'android' ? 'prayer-notifications-v2' : undefined,
         },
       });
 
@@ -119,7 +119,7 @@ export const schedulePrayerNotifications = async (
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: reminderTime,
-              channelId: Platform.OS === 'android' ? 'prayer-reminders' : undefined,
+              channelId: Platform.OS === 'android' ? 'prayer-reminders-v2' : undefined,
             },
           });
         }

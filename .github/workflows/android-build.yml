@@ -44,11 +44,27 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease
 
-      - name: List build outputs
+      - name: Sign APK
         run: |
-          echo "Listing APK directory:"
-          ls -la android/app/build/outputs/apk/release/ || echo "Release directory not found"
-          find android/app/build/outputs -name "*.apk" || echo "No APK files found"
+          # 1. Generate a release keystore
+          keytool -genkey -v -keystore release.keystore -alias android-release-key -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Mihrab Marine,O=Mihrab Marine,C=US"
+          
+          # 2. Find build tools and APK
+          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "Using Build Tools: $BUILD_TOOLS_PATH"
+          
+          APK_PATH=$(find android/app/build/outputs/apk/release -name "app-release-unsigned.apk" -o -name "app-release.apk" | head -n 1)
+          echo "Found APK to sign: $APK_PATH"
+          
+          # 3. ZipAlign (Required before signing)
+          $BUILD_TOOLS_PATH/zipalign -v -p 4 "$APK_PATH" android/app/build/outputs/apk/release/app-release-aligned.apk
+          
+          # 4. Sign the APK
+          $BUILD_TOOLS_PATH/apksigner sign --ks release.keystore --ks-pass pass:android --key-pass pass:android --out android/app/build/outputs/apk/release/app-release-signed.apk android/app/build/outputs/apk/release/app-release-aligned.apk
+          
+          # 5. Clean up
+          rm "$APK_PATH"
+          rm android/app/build/outputs/apk/release/app-release-aligned.apk
 
       - name: Get App Version
         id: get_version
@@ -66,9 +82,8 @@ jobs:
       - name: Rename APKs
         run: |
           cd android/app/build/outputs/apk/release/
-          for file in *.apk; do
-            mv "$file" "mihrab-marine-${file#app-}"
-          done
+          # We only expect app-release-signed.apk now
+          mv app-release-signed.apk "mihrab-marine-v${{ env.VERSION }}.apk"
           ls -la
 
       - name: Upload APK Artifact

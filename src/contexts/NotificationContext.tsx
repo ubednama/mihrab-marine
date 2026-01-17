@@ -71,18 +71,20 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('prayer-notifications', {
+      Notifications.setNotificationChannelAsync('prayer-notifications-v2', {
         name: 'Prayer Notifications',
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: '#FF231F7C',
+        sound: 'default',
       });
 
-      Notifications.setNotificationChannelAsync('prayer-reminders', {
+      Notifications.setNotificationChannelAsync('prayer-reminders-v2', {
         name: 'Prayer Reminders',
         importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: '#FF231F7C',
+        sound: 'default',
       });
     }
 
@@ -184,7 +186,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: prayerTime,
-              channelId: Platform.OS === 'android' ? 'prayer-notifications' : undefined,
+              channelId: Platform.OS === 'android' ? 'prayer-notifications-v2' : undefined,
             },
           });
         }
@@ -205,7 +207,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: beforeTime,
-              channelId: Platform.OS === 'android' ? 'prayer-reminders' : undefined,
+              channelId: Platform.OS === 'android' ? 'prayer-reminders-v2' : undefined,
             },
           });
         }
